@@ -1,0 +1,66 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+class Program
+{
+    static void Main()
+    {
+        string input = "sqrrqabccbatudefggfedvwhijkllkjihxymnnmzpop";
+        var result = FindLongestUniquePalindromes(input);
+
+        foreach (var palindromeInfo in result)
+        {
+            Console.WriteLine($"Text: {palindromeInfo.Palindrome}, Index: {palindromeInfo.StartIndex}, Length: {palindromeInfo.Length}");
+        }
+    }
+
+    public static List<PalindromeInfo> FindLongestUniquePalindromes(string s)
+    {
+        var uniquePalindromes = new Dictionary<string, PalindromeInfo>();
+
+  
+        for (int i = 0; i < s.Length; i++)
+        {
+            for (int j = i + 1; j <= s.Length; j++)
+            {
+                string substring = s.Substring(i, j - i);
+                if (IsPalindrome(substring) && !uniquePalindromes.ContainsKey(substring))
+                {
+                    uniquePalindromes[substring] = new PalindromeInfo
+                    {
+                        Palindrome = substring,
+                        StartIndex = i,
+                        Length = substring.Length
+                    };
+                }
+            }
+        }
+
+        return uniquePalindromes.Values
+            .OrderByDescending(p => p.Length)
+            .Take(3)
+            .ToList();
+    }
+
+    private static bool IsPalindrome(string s)
+    {
+        int left = 0;
+        int right = s.Length - 1;
+        while (left < right)
+        {
+            if (s[left] != s[right]) return false;
+            left++;
+            right--;
+        }
+        return true;
+    }
+
+    public class PalindromeInfo
+    {
+        public string Palindrome { get; set; }
+        public int StartIndex { get; set; }
+        public int Length { get; set; }
+    }
+}
+
